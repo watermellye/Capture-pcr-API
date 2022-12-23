@@ -2,6 +2,8 @@ from mitmproxy.script import concurrent
 import pcrclient
 import json
 from os.path import dirname, join, exists
+import os
+from shutil import copy
 import datetime
 
 curpath = dirname(__file__)
@@ -36,11 +38,20 @@ def process(content, url, typ):
                 json.dump(dic, fp, ensure_ascii=False, indent=4)
         except Exception as e:
             print(f'\n           Exception occurred in dumping ({typ})\n           {repr(e)}\n')
+            return
+
         with open(join(curpath, "log.txt"), "a+", encoding="utf-8") as fp:
             if typ != "response":
                 print(f'{datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")}  {url.split("net")[-1][1:]} {typ}', file=fp, end=" ")
             else:
                 print(f'{typ}', file=fp)
+                filenames = list(sorted(os.listdir(join(curpath, "last10")), reverse=True))
+                for filename in filenames:
+                    if int(filename[0]) == 9:
+                        os.remove(join(curpath, f'last10/{filename}'))
+                    elif 0 <= int(filename[0]) < 9:
+                        os.rename(join(curpath, f'last10/{filename}'), join(curpath, f'last10/{int(filename[0])+1}{filename[1:]}'))
+                copy(path, join(curpath, f'last10/0_{str(forma(url))[:256]}.json'))
 
 
 @concurrent

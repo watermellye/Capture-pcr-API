@@ -1,20 +1,21 @@
 # 安装模拟器和游戏
 
-下载mumu（安卓12或安卓6 64x） https://mumu.163.com/index.html
+[下载 MUMU模拟器（安卓12或安卓6 64x）](https://mumu.163.com/index.html)
 
-下载pcr https://game.bilibili.com/pcr/#kv
+[下载 BCR](https://game.bilibili.com/pcr/#kv)
 
-安装 登录 下载数据
+安装，登录，下载数据。
 
 # 安装mitmproxy
 
-下载安装 https://www.mitmproxy.org/
+[下载](https://www.mitmproxy.org/)，安装 
 
-运行```mitmdump```，然后在 ```C:\Users\<your_username>\.mitmproxy\``` 找到```mitmproxy-ca.p12```，点击安装。
+运行`mitmdump`，然后在 `%USERPROFILE%\.mitmproxy\` 找到`mitmproxy-ca.p12`，点击安装。
 
-需要修改一个设置：```将所有证书都放入下列存储->受信任的根证书颁发机构```
+需要修改一个设置：`将所有证书都放入下列存储 → 受信任的根证书颁发机构`
 
-# 配置conda和python
+# 配置python环境
+（以Conda为例）
 ```
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 conda create -n pcr python=3.10
@@ -24,39 +25,52 @@ pip install crypto
 pip install pycryptodome
 ```
 
-打开crypto安装路径（例：```C:\Users\<your_username>\[anaconda3|miniconda3|.conda]\envs\pcr\Lib\site-packages```），将```crypto```改为```Crypto```（C大写）。实际路径可以通过vscode右下角选择解释器中找到。
+打开crypto安装路径（例：`%USERPROFILE%\[anaconda3|miniconda3|.conda]\envs\pcr\Lib\site-packages`），将`crypto`改为`Crypto`（C大写）。实际路径可以通过vscode右下角选择解释器中找到。
 
 # 使用
-## pc（每次要抓包前）
-打开cmd->```ipconfig```->找到当前正在使用的网络的IPv4地址（例：192.168.0.108）
+## 在本机中：
 
-## powshell（每次要抓包前）
-（本文件同目录下）打开```powershell（管理员）```
+每次要抓包前：
+
+1. 打开 console（`cmd`或`powershell`）（VSCode快捷键：`` ctrl+` ``） → 输入`ipconfig` → 找到当前正在使用的网络的IPv4地址并记下（例：192.168.0.108）
+2. （本文件同目录下）打开 console（可能需要管理员），输入：
 
 ```
 conda activate pcr
 mitmdump -p 1825 -s run.py --quiet
 ```
 
-## mumu（只要设置一次）
-mumu6：打开设置->WLAN->长按已连接的这个wifi->修改网络->高级选项（右侧的展开剪头）
+（提示没有 conda 的话，就打开`Anaconda Powershell Prompt`，然后 cd 到本目录）
 
-mumu12：打开设置->WLAN->点击互联网->点击WiredSSID
+## 在模拟器中：
 
+以下操作只需进行一次：
 
-代理->手动->代理服务器主机名192.168.0.108（上述获取的地址）->代理服务器端口1825（或在mitmdump中自定义的其它端口）
+1. 打开代理界面
+   - mumu6：打开设置 → WLAN → 长按已连接的这个wifi → 修改网络 → 高级选项（右侧的展开剪头）
+   - mumu12：打开设置 → WLAN → 点击互联网 → 点击WiredSSID
+   - mumu12新：打开设置 → 网络和互联网 → 点击互联网 → 点击wlan0 → 右上角笔图标 → 高级选项
+2. 设置代理
+   1. 代理 → 手动
+   2. 输入代理服务器主机名（192.168.0.108）（或上述获取的地址）
+   3. 输入代理服务器端口（1825）（或在启动mitmdump时自定义的其它端口）
+3. 下载证书
+   - 打开安卓的浏览器，输入`mitm.it`，下载android版的证书
+4. 安装证书
+   - mumu6 安装证书：直接点击下载好的文件（会要你设置pin）
+   - mumu12 安装证书：详见 [本 Repo 的 issue #1](https://github.com/watermellye/Capture-pcr-API/issues/1#issuecomment-2075260712)
 
-注：不使用mitmdump时，模拟器想正常联网，需要把代理改回“无”；下载游戏时不要开mitm，会很慢。
+至此万事大吉，可以启动 BCR 了。
 
-打开安卓的浏览器，输入```mitm.it```，下载android版的证书
+注：
+- 代理记录会保存，重启模拟器不需要重新设置代理。
+- 不使用mitmdump时，模拟器中需要把代理改回“无”以正常联网。
+- 下载游戏时不要开mitm，会很慢。
 
-mumu6安装证书：直接点击下载好的文件（会要你设置pin）
+## 获取API数据
 
-mumu12安装证书：打开设置->WLAN->互联网->网络偏好设置->安装证书
+通过观察`last10`文件夹（中的`_.json`）和`./log.txt`（存储api调用历史记录的文件）以观察当前操作触发的api。
 
-# 其它
-通过观察```last10```文件夹和```./log.txt```（存储api调用历史记录的文件）以观察当前操作触发的api。
+如需要，在`./debug/`中存储了每个api的最后一次调用结果。
 
-如需要，在```./debug/```中存储了每个api的最后一次调用结果。
-
-如有异常错误，可以观察powershell窗口获取信息。
+如有异常错误，可以观察 console 获取信息。

@@ -17,6 +17,7 @@
 # 配置python环境
 （以Conda为例）
 ```
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 conda create -n pcr python=3.10
 conda activate pcr
@@ -58,7 +59,7 @@ mitmdump -p 1825 -s run.py --quiet
    - 打开安卓的浏览器，输入`mitm.it`，下载android版的证书
 4. 安装证书
    - mumu6 安装证书：直接点击下载好的文件（会要你设置pin）
-   - mumu12 安装证书：详见 [本 Repo 的 issue #1](https://github.com/watermellye/Capture-pcr-API/issues/1#issuecomment-2075260712)
+   - mumu12 安装证书：见本说明最下方详。详细图文版见 [本 Repo 的 issue #1](https://github.com/watermellye/Capture-pcr-API/issues/1#issuecomment-2075260712)
 
 至此万事大吉，可以启动 BCR 了。
 
@@ -74,3 +75,13 @@ mitmdump -p 1825 -s run.py --quiet
 如需要，在`./debug/`中存储了每个api的最后一次调用结果。
 
 如有异常错误，可以观察 console 获取信息。
+
+## mumu12 安装证书文字版说明
+1. 把模拟器的 Root 和系统盘可读写功能打开，重启模拟器。
+2. 下载安装openssl。（Light 版即可。安装时一路默认。）https://slproweb.com/products/Win32OpenSSL.html
+3. 获取证书的 subject_hash：`openssl x509 -subject_hash_old -in 证书名.crt`（证书在 download 文件夹下。download 文件夹就在 mumu 共享目录下。）
+4. 重命名证书：把证书重命名为`<openssl console中（证书上方小写字母）显示的hash>.0`
+5. 下载 Root Explorer。（mumu 桌面上的“小工具”文件夹中自带一个RE。点击即可安装。）（官方安装路径：https://rootexplorer.co/download/RootExplorer.apk）
+6. 把根目录mount为读写 r/w
+7. 把证书复制到 /etc/security/cacerts/
+然后就可以启动mitmdump，然后启动BCR抓包了。

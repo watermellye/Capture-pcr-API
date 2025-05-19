@@ -16,7 +16,8 @@ def forma(url):
 
 
 def process(content, url, typ):
-    if "/pool/Movie" in url:
+    if any(x in url for x in ["/pool/Movie", "client_ob", "domain_switch_count", "/media/", "/sdk-hot-deploy/", "/webstatic/"]):
+        print(f'skipping {url[:256]}')
         return
     try:
         unpacked = ({}, "") if len(content) == 0 else (pcrclient.pcrclient.unpackRsp(content) if typ == "response" else pcrclient.pcrclient.unpack(content))
@@ -27,11 +28,15 @@ def process(content, url, typ):
     print(f'    {str(unpacked)[:256]} {"..." if len(unpacked) > 256 else ""}')
     if not os.path.exists(join(curpath, "debug")):
         os.makedirs(join(curpath, "debug"))
-    path = join(curpath, f'debug/{str(forma(url))[:256]}.json')
+    path = join(curpath, f'debug/{str(forma(url))[:128]}.json')
     dic = {}
     if exists(path):
-        with open(path, 'r', encoding="utf-8") as fp:
-            dic = json.load(fp)
+        try:
+            with open(path, 'r', encoding="utf-8") as fp:
+                dic = json.load(fp)
+        except Exception as e:
+            print(f'Failed to load {path}: {e}')
+            dic = {}
     try:
         with open(path, 'w', encoding="utf-8") as fp:
             dic["time"] = f'{datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")}'
@@ -55,7 +60,7 @@ def process(content, url, typ):
                     os.remove(join(curpath, f'last10/{filename}'))
                 elif 0 <= int(filename[0]) < 9:
                     os.rename(join(curpath, f'last10/{filename}'), join(curpath, f'last10/{int(filename[0])+1}{filename[1:]}'))
-            copy(path, join(curpath, f'last10/0_{str(forma(url))[:256]}.json'))
+            copy(path, join(curpath, f'last10/0_{str(forma(url))[:128]}.json'))
             copy(path, join(curpath, 'last10/_.json'))
 
 

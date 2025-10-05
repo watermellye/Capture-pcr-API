@@ -79,8 +79,8 @@ mitmdump -p 1825 -s run.py --quiet
 ## mumu12 安装证书文字版说明
 1. 把模拟器的 Root 和系统盘可读写功能打开，重启模拟器。
 2. 下载安装openssl。（Light 版即可。安装时一路默认。）https://slproweb.com/products/Win32OpenSSL.html
-3. 获取证书的 subject_hash：`openssl x509 -subject_hash_old -in 证书名.crt`（证书在 download 文件夹下。download 文件夹就在 mumu 共享目录下。）
-4. 重命名证书：把证书重命名为`<openssl console中（证书上方小写字母）显示的hash>.0`
+3. 获取证书的 subject_hash：`openssl x509 -subject_hash_old -in mitmproxy-ca-cert.crt`（证书在 download 文件夹下。download 文件夹就在 mumu 共享目录下。）
+4. 重命名证书：把证书重命名为`<openssl console中（证书上方小写字母）显示的hash>.0`（例：`c8750f0d.0`）
 5. 下载 Root Explorer。（mumu 桌面上的“小工具”文件夹中自带一个RE。点击即可安装。）（官方安装路径：https://rootexplorer.co/download/RootExplorer.apk）
 6. 把根目录mount为读写 r/w
 7. 把证书复制到 /etc/security/cacerts/
